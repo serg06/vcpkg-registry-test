@@ -25,10 +25,30 @@ vcpkg_build_cmake(
 	TARGET libcef_dll_wrapper
 )
 
+set(VCPKG_CRT_LINKAGE dynamic)
+set(VCPKG_LIBRARY_LINKAGE dynamic)
+
 # file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 
 set(DEBUG_BUILD_DIR "${CURRENT_BUILDTREES_DIR}/${HOST_TRIPLET}-dbg")
 set(CEF_DIR "${DEBUG_BUILD_DIR}/ChromiumEmbeddedFramework")
+
+# /lib release
+file(
+	COPY "${CEF_DIR}/build/libcef_dll_wrapper/Release/libcef_dll_wrapper.lib"
+	DESTINATION "${CURRENT_PACKAGES_DIR}/lib"
+)
+
+# /lib debug
+file(
+	COPY "${CEF_DIR}/build/libcef_dll_wrapper/Debug/libcef_dll_wrapper.lib"
+	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib"
+)
+
+file(
+	COPY "${CEF_DIR}/build/libcef_dll_wrapper/Debug/libcef_dll_wrapper.pdb"
+	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib"
+)
 
 # /include
 file(
