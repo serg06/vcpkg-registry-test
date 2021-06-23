@@ -1,5 +1,5 @@
 {
   "default": {
-    "cef_port": { "baseline": "1.0.0", "port-version": 0 }
+    "vcpkg-cef-port": { "baseline": "1.0.0", "port-version": 0 }
   }
 }
