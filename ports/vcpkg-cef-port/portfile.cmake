@@ -14,7 +14,11 @@ vcpkg_from_github(
 vcpkg_configure_cmake(
 	SOURCE_PATH "${SOURCE_PATH}"
 )
-vcpkg_install_cmake()
+
+vcpkg_build_cmake(
+	TARGET libcef_dll_wrapper
+)
+
 vcpkg_fixup_cmake_targets()
 
 # file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
