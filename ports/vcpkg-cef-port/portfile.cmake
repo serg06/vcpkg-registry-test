@@ -1,8 +1,4 @@
-file (STRINGS "authtoken.txt" AUTH_TOKEN)
-
-message("Auth token is: ${AUTH_TOKEN}")
-message("VCPKG_CRT_LINKAGE is: ${VCPKG_CRT_LINKAGE}")
-message("VCPKG_LIBRARY_LINKAGE is: ${VCPKG_LIBRARY_LINKAGE}")
+set(orig_VCPKG_LIBRARY_LINKAGE ${VCPKG_LIBRARY_LINKAGE})
 
 set(CEF_VERSION "81.3.8")
 set(CHROMIUM_VERSION "81.0.4044.138")
@@ -29,181 +25,80 @@ vcpkg_extract_source_archive_ex(
 	# NO_REMOVE_ONE_LEVEL
 )
 
-# DONE!
-# set(SOURCE_PATH BASE_PATH)
 message("Extract archive: ${ARCHIVE}")
-# message("To path: ${SOURCE_PATH}/${FOLDER_NAME}")
 message("To path: ${SOURCE_PATH}")
 
 # Required, or else libcef.lib gives the error "Could not find proper second linker member." Chromium does the same: https://github.com/microsoft/vcpkg/blob/030cfaa24de9ea1bbf0a4d9c615ce7312ba77af1/ports/chromium-base/portfile.cmake
 set(VCPKG_POLICY_SKIP_ARCHITECTURE_CHECK enabled)
 
-# TODO: Consider moving this to vcpkg_configure_cmake as "OPTIONS -DBUILD_SHARED_LIBS=OFF"
-set(VCPKG_CRT_LINKAGE static)
+# Temporarily override linker config to build properly
 set(VCPKG_LIBRARY_LINKAGE static)
 
-# TODO: PREFER_NINJA
+# Disable PREFER_NINJA because it changes the output directories slightly
 vcpkg_configure_cmake(
 	SOURCE_PATH "${SOURCE_PATH}"
+	OPTIONS
+		-DCEF_RUNTIME_LIBRARY_FLAG=/MD
 )
+
+# Restore linker config
+set(VCPKG_LIBRARY_LINKAGE ${orig_VCPKG_LIBRARY_LINKAGE})
 
 vcpkg_build_cmake(
 	TARGET libcef_dll_wrapper
 )
 
-set(VCPKG_CRT_LINKAGE dynamic)
-set(VCPKG_LIBRARY_LINKAGE dynamic)
+message("CURRENT_PACKAGES_DIR: ${CURRENT_PACKAGES_DIR}")
 
-# file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
-
+set(RELEASE_BUILD_DIR "${CURRENT_BUILDTREES_DIR}/${HOST_TRIPLET}-rel")
 set(DEBUG_BUILD_DIR "${CURRENT_BUILDTREES_DIR}/${HOST_TRIPLET}-dbg")
-set(CEF_DIR "${DEBUG_BUILD_DIR}/ChromiumEmbeddedFramework")
 
-
-################################
+#########################################
 
 # /lib release
 file(
-	COPY "${CEF_DIR}/build/libcef_dll_wrapper/Release/libcef_dll_wrapper.lib"
+	COPY
+		"${RELEASE_BUILD_DIR}/libcef_dll_wrapper/Release/libcef_dll_wrapper.lib"
+		"${RELEASE_BUILD_DIR}/libcef_dll_wrapper/Release/libcef_dll_wrapper.pdb"
+		"${SOURCE_PATH}/Release/libcef.lib"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/lib"
 )
 
+# /bin release
 file(
-	COPY "${CEF_DIR}/Release/libcef.dll"
+	COPY "${SOURCE_PATH}/Release/libcef.dll"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/bin"
 )
 
-file(
-	COPY "${CEF_DIR}/Release/libcef.lib"
-	DESTINATION "${CURRENT_PACKAGES_DIR}/lib"
-)
-
-
-# file(
-# 	COPY "${CEF_DIR}/Release/swiftshader"
-# 	DESTINATION "${CURRENT_PACKAGES_DIR}/bin"
-# )
-
-# file(
-# 	COPY "${CEF_DIR}/Release/swiftshader/libEGL.dll"
-# 	DESTINATION "${CURRENT_PACKAGES_DIR}/bin"
-# )
-
-# file(
-# 	COPY "${CEF_DIR}/Debug/swiftshader/libGLESv2.dll"
-# 	DESTINATION "${Release}/bin"
-# )
-
-
-
-# file(
-# 	GLOB
-# 	MORE_LIBS
-# 	"${CEF_DIR}/Release/*.lib"
-# )
-
-# file(
-# 	COPY ${MORE_LIBS}
-# 	DESTINATION "${CURRENT_PACKAGES_DIR}/lib"
-# )
-
-
-
-# file(
-# 	GLOB
-# 	MORE_DLLS
-# 	"${CEF_DIR}/Release/*.dll"
-# )
-
-# file(
-# 	COPY ${MORE_DLLS}
-# 	DESTINATION "${CURRENT_PACKAGES_DIR}/bin"
-# )
-
-
-##########
-
-
 # /lib debug
 file(
-	COPY "${CEF_DIR}/build/libcef_dll_wrapper/Debug/libcef_dll_wrapper.lib"
+	COPY
+		"${DEBUG_BUILD_DIR}/libcef_dll_wrapper/Debug/libcef_dll_wrapper.lib"
+		"${DEBUG_BUILD_DIR}/libcef_dll_wrapper/Debug/libcef_dll_wrapper.pdb"
+		"${SOURCE_PATH}/Debug/libcef.lib"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib"
 )
 
+# /bin debug
 file(
-	COPY "${CEF_DIR}/build/libcef_dll_wrapper/Debug/libcef_dll_wrapper.pdb"
-	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib"
-)
-
-file(
-	COPY "${CEF_DIR}/Debug/libcef.dll"
+	COPY "${SOURCE_PATH}/Debug/libcef.dll"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin"
 )
 
-file(
-	COPY "${CEF_DIR}/Debug/libcef.lib"
-	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib"
-)
-
-
-# file(
-# 	COPY "${CEF_DIR}/Debug/swiftshader"
-# 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin"
-# )
-
-# file(
-# 	COPY "${CEF_DIR}/Debug/swiftshader/libEGL.dll"
-# 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin"
-# )
-
-# file(
-# 	COPY "${CEF_DIR}/Debug/swiftshader/libGLESv2.dll"
-# 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin"
-# )
-
-
-
-# file(
-# 	GLOB
-# 	MORE_LIBS_DEBUG
-# 	"${CEF_DIR}/Debug/*.lib"
-# )
-
-# file(
-# 	COPY ${MORE_LIBS_DEBUG}
-# 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib"
-# )
-
-
-
-# file(
-# 	GLOB
-# 	MORE_DLLS_DEBUG
-# 	"${CEF_DIR}/Debug/*.dll"
-# )
-
-# file(
-# 	COPY ${MORE_DLLS_DEBUG}
-# 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin"
-# )
-
-
-########################
-
 # /include
 file(
-	COPY "${CEF_DIR}/include"
+	COPY "${SOURCE_PATH}/include"
 	DESTINATION "${CURRENT_PACKAGES_DIR}"
 )
 
 # Another /include for cef's own imports
 file(
-	COPY "${CEF_DIR}/include"
+	COPY "${SOURCE_PATH}/include"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/include"
 )
 
 # /copyright
 file(
-	INSTALL "${CEF_DIR}/LICENSE.txt"
+	INSTALL "${SOURCE_PATH}/LICENSE.txt"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
 	RENAME copyright)
