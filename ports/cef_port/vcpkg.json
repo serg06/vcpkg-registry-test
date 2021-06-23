@@ -1,5 +1,5 @@
 {
-	"name": "cef",
+	"name": "cef_port",
 	"version": "1.0.0",
 	"description": "A simple utf-8 based unicode decoding and encoding library",
 	"homepage": "https://github.com/northwindtraders/beicode"
