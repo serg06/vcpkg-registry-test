@@ -13,6 +13,7 @@ vcpkg_from_github(
 	HEAD_REF main
 )
 
+# TODO: Consider moving this to vcpkg_configure_cmake as "OPTIONS -DBUILD_SHARED_LIBS=OFF"
 set(VCPKG_CRT_LINKAGE static)
 set(VCPKG_LIBRARY_LINKAGE static)
 
@@ -24,11 +25,19 @@ vcpkg_build_cmake(
 	TARGET libcef_dll_wrapper
 )
 
-vcpkg_fixup_cmake_targets()
-
 # file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 
-# file(
-# 	INSTALL "${SOURCE_PATH}/LICENSE"
-# 	DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
-# 	RENAME copyright)
+set(DEBUG_BUILD_DIR "${CURRENT_BUILDTREES_DIR}/${HOST_TRIPLET}-dbg")
+set(CEF_DIR "${DEBUG_BUILD_DIR}/ChromiumEmbeddedFramework")
+
+# /include
+file(
+	COPY "${CEF_DIR}/include"
+	DESTINATION "${CURRENT_PACKAGES_DIR}"
+)
+
+# /copyright
+file(
+	INSTALL "${CEF_DIR}/LICENSE.txt"
+	DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
+	RENAME copyright)
