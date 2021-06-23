@@ -4,14 +4,36 @@ message("Auth token is: ${AUTH_TOKEN}")
 message("VCPKG_CRT_LINKAGE is: ${VCPKG_CRT_LINKAGE}")
 message("VCPKG_LIBRARY_LINKAGE is: ${VCPKG_LIBRARY_LINKAGE}")
 
-vcpkg_from_github(
-	OUT_SOURCE_PATH SOURCE_PATH
-	REPO serg06/vcpkg-cef-test-priv
-	REF ab15d09028d4b978ce4082e1d8d0e5444b98ed5b
-	SHA512 36e83291cd8a968e7b173c2c543c1f57e3ed1936436a883baed8ef4aefd045b5e2bb7e8dea94c27b8911d54a7b12b36a4a5e6887b8bf653eeac8bfd43b64958c
-	AUTHORIZATION_TOKEN "${AUTH_TOKEN}"
-	HEAD_REF main
+set(CEF_VERSION "81.3.8")
+set(CHROMIUM_VERSION "81.0.4044.138")
+set(PLATFORM_NAME "windows64")
+set(COMMIT_SHORTHASH "g1a0137c")
+set(ARCHIVE_HASH "7626bcf8bb7ec98575dd91ea6a726eb35567c6939b6387bd5c8c400bc4918dc4a4575d9879ad40cc51c1627c0fcfaf2448d2d4259e2a3748ba7aa183cb1400cc")
+
+set(FOLDER_NAME "cef_binary_${CEF_VERSION}+${COMMIT_SHORTHASH}+chromium-${CHROMIUM_VERSION}_${PLATFORM_NAME}")
+set(ARCHIVE_NAME "${FOLDER_NAME}.tar.bz2")
+
+# Download
+vcpkg_download_distfile(
+	ARCHIVE
+	URLS "https://cef-builds.spotifycdn.com/${ARCHIVE_NAME}"
+	FILENAME "${ARCHIVE_NAME}"
+	SHA512 ${ARCHIVE_HASH}
 )
+
+# Extract
+vcpkg_extract_source_archive_ex(
+	OUT_SOURCE_PATH SOURCE_PATH
+	ARCHIVE "${ARCHIVE}"
+	REF "${CEF_VERSION}"
+	# NO_REMOVE_ONE_LEVEL
+)
+
+# DONE!
+# set(SOURCE_PATH BASE_PATH)
+message("Extract archive: ${ARCHIVE}")
+# message("To path: ${SOURCE_PATH}/${FOLDER_NAME}")
+message("To path: ${SOURCE_PATH}")
 
 # Required, or else libcef.lib gives the error "Could not find proper second linker member." Chromium does the same: https://github.com/microsoft/vcpkg/blob/030cfaa24de9ea1bbf0a4d9c615ce7312ba77af1/ports/chromium-base/portfile.cmake
 set(VCPKG_POLICY_SKIP_ARCHITECTURE_CHECK enabled)
@@ -20,6 +42,7 @@ set(VCPKG_POLICY_SKIP_ARCHITECTURE_CHECK enabled)
 set(VCPKG_CRT_LINKAGE static)
 set(VCPKG_LIBRARY_LINKAGE static)
 
+# TODO: PREFER_NINJA
 vcpkg_configure_cmake(
 	SOURCE_PATH "${SOURCE_PATH}"
 )
