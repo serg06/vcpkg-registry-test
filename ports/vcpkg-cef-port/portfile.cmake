@@ -13,8 +13,8 @@ vcpkg_from_github(
 	HEAD_REF main
 )
 
-# set(VCPKG_CRT_LINKAGE static)
-# set(VCPKG_LIBRARY_LINKAGE static)
+set(VCPKG_CRT_LINKAGE static)
+set(VCPKG_LIBRARY_LINKAGE static)
 
 vcpkg_configure_cmake(
 	SOURCE_PATH "${SOURCE_PATH}"
