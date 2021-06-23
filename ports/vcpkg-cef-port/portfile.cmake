@@ -36,6 +36,12 @@ file(
 	DESTINATION "${CURRENT_PACKAGES_DIR}"
 )
 
+# Another /include for cef's own imports
+file(
+	COPY "${CEF_DIR}/include"
+	DESTINATION "${CURRENT_PACKAGES_DIR}/include"
+)
+
 # /copyright
 file(
 	INSTALL "${CEF_DIR}/LICENSE.txt"
