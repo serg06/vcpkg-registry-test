@@ -13,6 +13,9 @@ vcpkg_from_github(
 	HEAD_REF main
 )
 
+# Required, or else libcef.lib gives the error "Could not find proper second linker member." Chromium does the same: https://github.com/microsoft/vcpkg/blob/030cfaa24de9ea1bbf0a4d9c615ce7312ba77af1/ports/chromium-base/portfile.cmake
+set(VCPKG_POLICY_SKIP_ARCHITECTURE_CHECK enabled)
+
 # TODO: Consider moving this to vcpkg_configure_cmake as "OPTIONS -DBUILD_SHARED_LIBS=OFF"
 set(VCPKG_CRT_LINKAGE static)
 set(VCPKG_LIBRARY_LINKAGE static)
@@ -33,11 +36,70 @@ set(VCPKG_LIBRARY_LINKAGE dynamic)
 set(DEBUG_BUILD_DIR "${CURRENT_BUILDTREES_DIR}/${HOST_TRIPLET}-dbg")
 set(CEF_DIR "${DEBUG_BUILD_DIR}/ChromiumEmbeddedFramework")
 
+
+################################
+
 # /lib release
 file(
 	COPY "${CEF_DIR}/build/libcef_dll_wrapper/Release/libcef_dll_wrapper.lib"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/lib"
 )
+
+file(
+	COPY "${CEF_DIR}/Release/libcef.dll"
+	DESTINATION "${CURRENT_PACKAGES_DIR}/bin"
+)
+
+file(
+	COPY "${CEF_DIR}/Release/libcef.lib"
+	DESTINATION "${CURRENT_PACKAGES_DIR}/lib"
+)
+
+
+# file(
+# 	COPY "${CEF_DIR}/Release/swiftshader"
+# 	DESTINATION "${CURRENT_PACKAGES_DIR}/bin"
+# )
+
+# file(
+# 	COPY "${CEF_DIR}/Release/swiftshader/libEGL.dll"
+# 	DESTINATION "${CURRENT_PACKAGES_DIR}/bin"
+# )
+
+# file(
+# 	COPY "${CEF_DIR}/Debug/swiftshader/libGLESv2.dll"
+# 	DESTINATION "${Release}/bin"
+# )
+
+
+
+# file(
+# 	GLOB
+# 	MORE_LIBS
+# 	"${CEF_DIR}/Release/*.lib"
+# )
+
+# file(
+# 	COPY ${MORE_LIBS}
+# 	DESTINATION "${CURRENT_PACKAGES_DIR}/lib"
+# )
+
+
+
+# file(
+# 	GLOB
+# 	MORE_DLLS
+# 	"${CEF_DIR}/Release/*.dll"
+# )
+
+# file(
+# 	COPY ${MORE_DLLS}
+# 	DESTINATION "${CURRENT_PACKAGES_DIR}/bin"
+# )
+
+
+##########
+
 
 # /lib debug
 file(
@@ -49,6 +111,61 @@ file(
 	COPY "${CEF_DIR}/build/libcef_dll_wrapper/Debug/libcef_dll_wrapper.pdb"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib"
 )
+
+file(
+	COPY "${CEF_DIR}/Debug/libcef.dll"
+	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin"
+)
+
+file(
+	COPY "${CEF_DIR}/Debug/libcef.lib"
+	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib"
+)
+
+
+# file(
+# 	COPY "${CEF_DIR}/Debug/swiftshader"
+# 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin"
+# )
+
+# file(
+# 	COPY "${CEF_DIR}/Debug/swiftshader/libEGL.dll"
+# 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin"
+# )
+
+# file(
+# 	COPY "${CEF_DIR}/Debug/swiftshader/libGLESv2.dll"
+# 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin"
+# )
+
+
+
+# file(
+# 	GLOB
+# 	MORE_LIBS_DEBUG
+# 	"${CEF_DIR}/Debug/*.lib"
+# )
+
+# file(
+# 	COPY ${MORE_LIBS_DEBUG}
+# 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib"
+# )
+
+
+
+# file(
+# 	GLOB
+# 	MORE_DLLS_DEBUG
+# 	"${CEF_DIR}/Debug/*.dll"
+# )
+
+# file(
+# 	COPY ${MORE_DLLS_DEBUG}
+# 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin"
+# )
+
+
+########################
 
 # /include
 file(
