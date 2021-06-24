@@ -24,6 +24,7 @@ vcpkg_extract_source_archive_ex(
 
 # Required, or else libcef.lib gives the error "Could not find proper second linker member." Chromium does the same: https://github.com/microsoft/vcpkg/blob/030cfaa24de9ea1bbf0a4d9c615ce7312ba77af1/ports/chromium-base/portfile.cmake
 set(VCPKG_POLICY_SKIP_ARCHITECTURE_CHECK enabled)
+set(VCPKG_POLICY_SKIP_DUMPBIN_CHECKS enabled)
 
 # Required, or else you get linker errors
 set(VCPKG_LIBRARY_LINKAGE static)
@@ -51,7 +52,6 @@ file(
 	COPY
 		"${RELEASE_BUILD_DIR}/libcef_dll_wrapper/Release/libcef_dll_wrapper.lib"
 		"${RELEASE_BUILD_DIR}/libcef_dll_wrapper/Release/libcef_dll_wrapper.pdb"
-		"${SOURCE_PATH}/Release/cef_sandbox.lib"
 		"${SOURCE_PATH}/Release/libcef.lib"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/lib"
 )
@@ -81,7 +81,6 @@ file(
 	COPY
 		"${DEBUG_BUILD_DIR}/libcef_dll_wrapper/Debug/libcef_dll_wrapper.lib"
 		"${DEBUG_BUILD_DIR}/libcef_dll_wrapper/Debug/libcef_dll_wrapper.pdb"
-		"${SOURCE_PATH}/Debug/cef_sandbox.lib"
 		"${SOURCE_PATH}/Debug/libcef.lib"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib"
 )
