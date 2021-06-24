@@ -24,6 +24,8 @@ vcpkg_extract_source_archive_ex(
 
 # Required, or else libcef.lib gives the error "Could not find proper second linker member." Chromium does the same: https://github.com/microsoft/vcpkg/blob/030cfaa24de9ea1bbf0a4d9c615ce7312ba77af1/ports/chromium-base/portfile.cmake
 set(VCPKG_POLICY_SKIP_ARCHITECTURE_CHECK enabled)
+
+# Required, or else we get "outdated crt" errors when copying some pre-built DLLs.
 set(VCPKG_POLICY_SKIP_DUMPBIN_CHECKS enabled)
 
 # Required, or else you get linker errors
