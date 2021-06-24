@@ -51,14 +51,29 @@ file(
 	COPY
 		"${RELEASE_BUILD_DIR}/libcef_dll_wrapper/Release/libcef_dll_wrapper.lib"
 		"${RELEASE_BUILD_DIR}/libcef_dll_wrapper/Release/libcef_dll_wrapper.pdb"
+		"${SOURCE_PATH}/Release/cef_sandbox.lib"
 		"${SOURCE_PATH}/Release/libcef.lib"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/lib"
 )
 
 # /bin release
 file(
-	COPY "${SOURCE_PATH}/Release/libcef.dll"
+	COPY
+		"${SOURCE_PATH}/Release/chrome_elf.dll"
+		"${SOURCE_PATH}/Release/d3dcompiler_47.dll"
+		"${SOURCE_PATH}/Release/libcef.dll"
+		"${SOURCE_PATH}/Release/libEGL.dll"
+		"${SOURCE_PATH}/Release/libGLESv2.dll"
+		"${SOURCE_PATH}/Release/snapshot_blob.bin"
+		"${SOURCE_PATH}/Release/v8_context_snapshot.bin"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/bin"
+)
+
+file(
+	COPY
+		"${SOURCE_PATH}/Release/swiftshader/libEGL.dll"
+		"${SOURCE_PATH}/Release/swiftshader/libGLESv2.dll"
+	DESTINATION "${CURRENT_PACKAGES_DIR}/bin/swiftshader"
 )
 
 # /lib debug
@@ -66,14 +81,29 @@ file(
 	COPY
 		"${DEBUG_BUILD_DIR}/libcef_dll_wrapper/Debug/libcef_dll_wrapper.lib"
 		"${DEBUG_BUILD_DIR}/libcef_dll_wrapper/Debug/libcef_dll_wrapper.pdb"
+		"${SOURCE_PATH}/Debug/cef_sandbox.lib"
 		"${SOURCE_PATH}/Debug/libcef.lib"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib"
 )
 
 # /bin debug
 file(
-	COPY "${SOURCE_PATH}/Debug/libcef.dll"
+	COPY
+		"${SOURCE_PATH}/Debug/chrome_elf.dll"
+		"${SOURCE_PATH}/Debug/d3dcompiler_47.dll"
+		"${SOURCE_PATH}/Debug/libcef.dll"
+		"${SOURCE_PATH}/Debug/libEGL.dll"
+		"${SOURCE_PATH}/Debug/libGLESv2.dll"
+		"${SOURCE_PATH}/Debug/snapshot_blob.bin"
+		"${SOURCE_PATH}/Debug/v8_context_snapshot.bin"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin"
+)
+
+file(
+	COPY
+		"${SOURCE_PATH}/Debug/swiftshader/libEGL.dll"
+		"${SOURCE_PATH}/Debug/swiftshader/libGLESv2.dll"
+	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin/swiftshader"
 )
 
 # /include
