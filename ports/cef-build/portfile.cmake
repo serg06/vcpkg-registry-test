@@ -20,6 +20,8 @@ vcpkg_extract_source_archive_ex(
 	OUT_SOURCE_PATH SOURCE_PATH
 	ARCHIVE "${ARCHIVE}"
 	REF "${CEF_VERSION}"
+	PATCHES
+		"patch-cmake.patch"
 )
 
 # Required, or else libcef.lib gives the error "Could not find proper second linker member." Chromium does the same: https://github.com/microsoft/vcpkg/blob/030cfaa24de9ea1bbf0a4d9c615ce7312ba77af1/ports/chromium-base/portfile.cmake
@@ -40,84 +42,14 @@ vcpkg_configure_cmake(
 
 set(VCPKG_LIBRARY_LINKAGE ${orig_VCPKG_LIBRARY_LINKAGE})
 
-vcpkg_build_cmake(
-	TARGET libcef_dll_wrapper
+# TODO: Try vcpkg_copy_pdbs
+vcpkg_install_cmake(
 )
 
 set(RELEASE_BUILD_DIR "${CURRENT_BUILDTREES_DIR}/${HOST_TRIPLET}-rel")
 set(DEBUG_BUILD_DIR "${CURRENT_BUILDTREES_DIR}/${HOST_TRIPLET}-dbg")
 
 #########################################
-
-# /lib release
-file(
-	COPY
-		"${RELEASE_BUILD_DIR}/libcef_dll_wrapper/Release/libcef_dll_wrapper.lib"
-		"${RELEASE_BUILD_DIR}/libcef_dll_wrapper/Release/libcef_dll_wrapper.pdb"
-		"${SOURCE_PATH}/Release/libcef.lib"
-	DESTINATION "${CURRENT_PACKAGES_DIR}/lib"
-)
-
-# /bin release
-file(
-	COPY
-		"${SOURCE_PATH}/Release/chrome_elf.dll"
-		"${SOURCE_PATH}/Release/d3dcompiler_47.dll"
-		"${SOURCE_PATH}/Release/libcef.dll"
-		"${SOURCE_PATH}/Release/libEGL.dll"
-		"${SOURCE_PATH}/Release/libGLESv2.dll"
-		"${SOURCE_PATH}/Release/snapshot_blob.bin"
-		"${SOURCE_PATH}/Release/v8_context_snapshot.bin"
-	DESTINATION "${CURRENT_PACKAGES_DIR}/bin"
-)
-
-file(
-	COPY
-		"${SOURCE_PATH}/Release/swiftshader/libEGL.dll"
-		"${SOURCE_PATH}/Release/swiftshader/libGLESv2.dll"
-	DESTINATION "${CURRENT_PACKAGES_DIR}/bin/swiftshader"
-)
-
-# /lib debug
-file(
-	COPY
-		"${DEBUG_BUILD_DIR}/libcef_dll_wrapper/Debug/libcef_dll_wrapper.lib"
-		"${DEBUG_BUILD_DIR}/libcef_dll_wrapper/Debug/libcef_dll_wrapper.pdb"
-		"${SOURCE_PATH}/Debug/libcef.lib"
-	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib"
-)
-
-# /bin debug
-file(
-	COPY
-		"${SOURCE_PATH}/Debug/chrome_elf.dll"
-		"${SOURCE_PATH}/Debug/d3dcompiler_47.dll"
-		"${SOURCE_PATH}/Debug/libcef.dll"
-		"${SOURCE_PATH}/Debug/libEGL.dll"
-		"${SOURCE_PATH}/Debug/libGLESv2.dll"
-		"${SOURCE_PATH}/Debug/snapshot_blob.bin"
-		"${SOURCE_PATH}/Debug/v8_context_snapshot.bin"
-	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin"
-)
-
-file(
-	COPY
-		"${SOURCE_PATH}/Debug/swiftshader/libEGL.dll"
-		"${SOURCE_PATH}/Debug/swiftshader/libGLESv2.dll"
-	DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin/swiftshader"
-)
-
-# /include
-file(
-	COPY "${SOURCE_PATH}/include"
-	DESTINATION "${CURRENT_PACKAGES_DIR}"
-)
-
-# Another /include for cef's own imports
-file(
-	COPY "${SOURCE_PATH}/include"
-	DESTINATION "${CURRENT_PACKAGES_DIR}/include"
-)
 
 # /copyright
 file(
