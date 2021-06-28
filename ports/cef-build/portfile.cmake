@@ -57,3 +57,6 @@ file(
 	INSTALL "${SOURCE_PATH}/LICENSE.txt"
 	DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
 	RENAME copyright)
+
+# duplicate include
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
