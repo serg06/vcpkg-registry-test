@@ -35,11 +35,9 @@ set(VCPKG_LIBRARY_LINKAGE static)
 
 # Disable PREFER_NINJA because it changes the output directories slightly
 # TODO: Try adding it back
-message("MSVC_RUNTIME_LIBRARY WAS ${MSVC_RUNTIME_LIBRARY}")
+
 set(CEF_CONFIG_OPTS -DUSE_SANDBOX=NO)
-if("${MSVC_RUNTIME_LIBRARY}" STREQUAL "MultiThreadedDLL")
-	list(APPEND CEF_CONFIG_OPTS -DCEF_RUNTIME_LIBRARY_FLAG=/MD)
-elseif("${MSVC_RUNTIME_LIBRARY}" STREQUAL "MultiThreadedDebugDLL")
+if("${VCPKG_CRT_LINKAGE}" STREQUAL "dynamic")
 	list(APPEND CEF_CONFIG_OPTS -DCEF_RUNTIME_LIBRARY_FLAG=/MD)
 endif()
 
@@ -51,8 +49,7 @@ vcpkg_configure_cmake(
 set(VCPKG_LIBRARY_LINKAGE ${orig_VCPKG_LIBRARY_LINKAGE})
 
 # TODO: Try vcpkg_copy_pdbs
-vcpkg_install_cmake(
-)
+vcpkg_install_cmake()
 
 set(RELEASE_BUILD_DIR "${CURRENT_BUILDTREES_DIR}/${HOST_TRIPLET}-rel")
 set(DEBUG_BUILD_DIR "${CURRENT_BUILDTREES_DIR}/${HOST_TRIPLET}-dbg")
